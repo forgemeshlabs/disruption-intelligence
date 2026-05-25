@@ -1,0 +1,138 @@
+{
+  "example": true,
+  "version": 2,
+  "name": "Disruption Intelligence",
+  "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events.",
+  "resourceServerUrl": "https://warn.forgemesh.io",
+  "network": "<live-network-from-hosted-manifest>",
+  "payTo": "<live-payment-address-from-hosted-manifest>",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/events/:id/severity",
+      "price": "$0.01",
+      "description": "Event severity signal",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/events/:id/history",
+      "price": "$0.02",
+      "description": "Event history",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/events/:id/relationships",
+      "price": "$0.02",
+      "description": "Related events",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/events/:id/timeline",
+      "price": "$0.05",
+      "description": "Event timeline",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/events/:id/company-intel",
+      "price": "$0.03",
+      "description": "Company context for an event",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/companies/search",
+      "price": "$0.01",
+      "description": "Company search",
+      "params": {
+        "q": { "type": "string", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/companies/:id",
+      "price": "$0.05",
+      "description": "Company profile",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/companies/:id/intelligence",
+      "price": "$0.05",
+      "description": "Company intelligence",
+      "params": {
+        "id": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/radius/:zip",
+      "price": "$0.05",
+      "description": "Geographic radius intelligence",
+      "params": {
+        "zip": { "type": "string", "in": "path", "required": true },
+        "radius": { "type": "number", "required": false }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/territory/:zip/disruption",
+      "price": "$0.10",
+      "description": "Territory disruption summary",
+      "params": {
+        "zip": { "type": "string", "in": "path", "required": true },
+        "radius": { "type": "number", "required": false }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/regions/:state",
+      "price": "$0.02",
+      "description": "Regional summaries",
+      "params": {
+        "state": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/regions/:state/:county",
+      "price": "$0.01",
+      "description": "County summary",
+      "params": {
+        "state": { "type": "string", "in": "path", "required": true },
+        "county": { "type": "string", "in": "path", "required": true }
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/jurisdictions",
+      "price": "$0.02",
+      "description": "Jurisdiction summaries",
+      "params": {}
+    },
+    {
+      "method": "GET",
+      "path": "/jurisdictions/:state",
+      "price": "$0.01",
+      "description": "Jurisdiction summary",
+      "params": {
+        "state": { "type": "string", "in": "path", "required": true }
+      }
+    }
+  ]
+}

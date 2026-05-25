@@ -1,0 +1,579 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Disruption Intelligence",
+    "version": "1.0.0",
+    "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events. This document describes the public hosted API contract."
+  },
+  "servers": [
+    {
+      "url": "https://warn.forgemesh.io"
+    }
+  ],
+  "tags": [
+    { "name": "Public" },
+    { "name": "Event Intelligence" },
+    { "name": "Company Intelligence" },
+    { "name": "Geospatial Intelligence" },
+    { "name": "Regional Intelligence" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Check API availability",
+        "responses": {
+          "200": {
+            "description": "Service is available",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/llms.txt": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Retrieve the agent-readable API catalog",
+        "responses": {
+          "200": {
+            "description": "Agent-readable catalog",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Retrieve the live OpenAPI contract",
+        "responses": {
+          "200": {
+            "description": "OpenAPI document",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/x402.json": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Retrieve the live x402 discovery manifest",
+        "responses": {
+          "200": {
+            "description": "x402 discovery manifest",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stats": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Retrieve aggregate public statistics",
+        "responses": {
+          "200": {
+            "description": "Aggregate statistics",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sources": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Retrieve public source provenance",
+        "responses": {
+          "200": {
+            "description": "Source provenance",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Preview reported events",
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "minLength": 2, "maxLength": 2 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bounded event preview",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/recent": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Preview recent reported events",
+        "responses": {
+          "200": {
+            "description": "Bounded recent event preview",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{id}": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Preview one reported event",
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event preview",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": { "$ref": "#/components/schemas/EventPreview" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/company/{name}": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Preview events matching a company name",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bounded event preview",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/state/{state}": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Preview events for a state",
+        "parameters": [
+          { "$ref": "#/components/parameters/State" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bounded event preview",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{id}/severity": {
+      "get": {
+        "tags": ["Event Intelligence"],
+        "summary": "Retrieve event severity signal",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/events/{id}/history": {
+      "get": {
+        "tags": ["Event Intelligence"],
+        "summary": "Retrieve event history",
+        "x-x402-price": "$0.02",
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/events/{id}/relationships": {
+      "get": {
+        "tags": ["Event Intelligence"],
+        "summary": "Retrieve related events",
+        "x-x402-price": "$0.02",
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/events/{id}/timeline": {
+      "get": {
+        "tags": ["Event Intelligence"],
+        "summary": "Retrieve consolidated event timeline",
+        "x-x402-price": "$0.05",
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/events/{id}/company-intel": {
+      "get": {
+        "tags": ["Company Intelligence"],
+        "summary": "Retrieve company context for an event",
+        "x-x402-price": "$0.03",
+        "parameters": [
+          { "$ref": "#/components/parameters/EventId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/companies/search": {
+      "get": {
+        "tags": ["Company Intelligence"],
+        "summary": "Search company intelligence",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" }
+        }
+      }
+    },
+    "/companies/{id}": {
+      "get": {
+        "tags": ["Company Intelligence"],
+        "summary": "Retrieve company profile",
+        "x-x402-price": "$0.05",
+        "parameters": [
+          { "$ref": "#/components/parameters/CompanyId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/companies/{id}/intelligence": {
+      "get": {
+        "tags": ["Company Intelligence"],
+        "summary": "Retrieve company intelligence summary",
+        "x-x402-price": "$0.05",
+        "parameters": [
+          { "$ref": "#/components/parameters/CompanyId" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/radius/{zip}": {
+      "get": {
+        "tags": ["Geospatial Intelligence"],
+        "summary": "Retrieve geographic radius intelligence",
+        "x-x402-price": "$0.05",
+        "parameters": [
+          { "$ref": "#/components/parameters/Zip" },
+          { "$ref": "#/components/parameters/Radius" },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          },
+          { "$ref": "#/components/parameters/From" },
+          { "$ref": "#/components/parameters/To" },
+          {
+            "name": "minEmployees",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "naics",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/territory/{zip}/disruption": {
+      "get": {
+        "tags": ["Geospatial Intelligence"],
+        "summary": "Retrieve territory disruption summary",
+        "x-x402-price": "$0.10",
+        "parameters": [
+          { "$ref": "#/components/parameters/Zip" },
+          { "$ref": "#/components/parameters/Radius" },
+          { "$ref": "#/components/parameters/From" },
+          { "$ref": "#/components/parameters/To" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/regions/{state}": {
+      "get": {
+        "tags": ["Regional Intelligence"],
+        "summary": "Retrieve regional summaries for a state",
+        "x-x402-price": "$0.02",
+        "parameters": [
+          { "$ref": "#/components/parameters/State" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" }
+        }
+      }
+    },
+    "/regions/{state}/{county}": {
+      "get": {
+        "tags": ["Regional Intelligence"],
+        "summary": "Retrieve a county summary",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          { "$ref": "#/components/parameters/State" },
+          {
+            "name": "county",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/jurisdictions": {
+      "get": {
+        "tags": ["Regional Intelligence"],
+        "summary": "Retrieve jurisdiction summaries",
+        "x-x402-price": "$0.02",
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" }
+        }
+      }
+    },
+    "/jurisdictions/{state}": {
+      "get": {
+        "tags": ["Regional Intelligence"],
+        "summary": "Retrieve a jurisdiction summary",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          { "$ref": "#/components/parameters/State" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
+          "402": { "$ref": "#/components/responses/PaymentRequired" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "EventId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      },
+      "CompanyId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string" }
+      },
+      "State": {
+        "name": "state",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "minLength": 2, "maxLength": 2 }
+      },
+      "Zip": {
+        "name": "zip",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "pattern": "^[0-9]{5}$" }
+      },
+      "Radius": {
+        "name": "radius",
+        "in": "query",
+        "required": false,
+        "description": "Radius in miles.",
+        "schema": { "type": "number" }
+      },
+      "From": {
+        "name": "from",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string", "format": "date" }
+      },
+      "To": {
+        "name": "to",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string", "format": "date" }
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "service": { "type": "string" },
+          "version": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "EventPreview": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "source_state": { "type": "string" },
+          "company_name": { "type": "string" },
+          "location_city": { "type": "string", "nullable": true },
+          "location_county": { "type": "string", "nullable": true },
+          "location_state": { "type": "string", "nullable": true },
+          "employees_affected": { "type": "integer", "nullable": true },
+          "notice_date": { "type": "string", "format": "date", "nullable": true },
+          "effective_date": { "type": "string", "format": "date", "nullable": true },
+          "action_type": { "type": "string", "nullable": true }
+        }
+      },
+      "EventPreviewCollection": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EventPreview" }
+          }
+        }
+      }
+    },
+    "responses": {
+      "PaymentRequired": {
+        "description": "x402 payment authorization required. Use response metadata for active terms."
+      },
+      "NotFound": {
+        "description": "Requested resource was not found."
+      },
+      "IntelligenceResponse": {
+        "description": "Requested intelligence response.",
+        "content": {
+          "application/json": {
+            "schema": { "type": "object", "additionalProperties": true }
+          }
+        }
+      }
+    }
+  },
+  "x-x402": {
+    "discoveryUrl": "https://warn.forgemesh.io/.well-known/x402.json",
+    "terms": "Payment network and receiving address are provided by the live discovery response and per-request payment challenge."
+  }
+}

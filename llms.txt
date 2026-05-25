@@ -1,0 +1,30 @@
+# warn.forgemesh.io - Disruption Intelligence
+> Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events.
+> Hosted API: https://warn.forgemesh.io
+
+## Public Discovery
+GET /health - Service availability
+GET /stats - Aggregate reported-event statistics
+GET /events?state={state} - Bounded event previews
+GET /sources - Public source provenance
+GET /openapi.json - API contract
+GET /.well-known/x402.json - Live x402 payment discovery
+
+## Paid Intelligence
+GET /events/:id/severity - $0.01 - Event severity signal
+GET /events/:id/history - $0.02 - Event history
+GET /events/:id/relationships - $0.02 - Related events
+GET /events/:id/timeline - $0.05 - Event timeline
+GET /events/:id/company-intel - $0.03 - Company context for an event
+GET /companies/search - $0.01 - Company search
+GET /companies/:id - $0.05 - Company profile
+GET /companies/:id/intelligence - $0.05 - Company intelligence
+GET /radius/:zip - $0.05 - Geographic radius intelligence
+GET /territory/:zip/disruption - $0.10 - Territory disruption summary
+GET /regions/:state - $0.02 - Regional summaries
+GET /regions/:state/:county - $0.01 - County summary
+GET /jurisdictions - $0.02 - Jurisdiction summaries
+GET /jurisdictions/:state - $0.01 - Jurisdiction summary
+
+## Payment
+Use the live endpoint response or hosted discovery manifest for current x402 payment terms.
