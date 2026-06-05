@@ -1,11 +1,11 @@
 # Quick Start
 
-Disruption Intelligence is a hosted API. No engine installation or local database is required to begin using its public endpoints.
+Disruption Intelligence is a hosted API. No engine installation or local database is required to begin using its free endpoints.
 
 ## Base URL
 
 ```bash
-export DISRUPTION_API_BASE=https://warn.forgemesh.io
+export DISRUPTION_API_BASE=https://disruption.forgemesh.io
 ```
 
 ## Public Requests
@@ -16,13 +16,13 @@ Check availability:
 curl "$DISRUPTION_API_BASE/health"
 ```
 
-Request aggregate public statistics:
+Request aggregate free statistics:
 
 ```bash
 curl "$DISRUPTION_API_BASE/stats"
 ```
 
-Request a bounded public preview of events reported for a state:
+Request a bounded free preview of events reported for a state:
 
 ```bash
 curl "$DISRUPTION_API_BASE/events?state=TX"

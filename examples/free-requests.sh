@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-API_BASE="${DISRUPTION_API_BASE:-https://warn.forgemesh.io}"
+API_BASE="${DISRUPTION_API_BASE:-https://disruption.forgemesh.io}"
 
 curl -fsS "$API_BASE/health"
 printf '\n'

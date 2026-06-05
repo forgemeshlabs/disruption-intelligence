@@ -3,577 +3,684 @@
   "info": {
     "title": "Disruption Intelligence",
     "version": "1.0.0",
-    "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events. This document describes the public hosted API contract."
+    "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events. Pay per call in USDC on Base."
   },
   "servers": [
     {
-      "url": "https://warn.forgemesh.io"
+      "url": "https://disruption.forgemesh.io"
     }
   ],
-  "tags": [
-    { "name": "Public" },
-    { "name": "Event Intelligence" },
-    { "name": "Company Intelligence" },
-    { "name": "Geospatial Intelligence" },
-    { "name": "Regional Intelligence" }
-  ],
   "paths": {
-    "/health": {
+    "/events/{id}/severity": {
       "get": {
-        "tags": ["Public"],
-        "summary": "Check API availability",
-        "responses": {
-          "200": {
-            "description": "Service is available",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HealthResponse" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/llms.txt": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Retrieve the agent-readable API catalog",
-        "responses": {
-          "200": {
-            "description": "Agent-readable catalog",
-            "content": {
-              "text/plain": {
-                "schema": { "type": "string" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/openapi.json": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Retrieve the live OpenAPI contract",
-        "responses": {
-          "200": {
-            "description": "OpenAPI document",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "additionalProperties": true }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/.well-known/x402.json": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Retrieve the live x402 discovery manifest",
-        "responses": {
-          "200": {
-            "description": "x402 discovery manifest",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "additionalProperties": true }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/stats": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Retrieve aggregate public statistics",
-        "responses": {
-          "200": {
-            "description": "Aggregate statistics",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "additionalProperties": true }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/sources": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Retrieve public source provenance",
-        "responses": {
-          "200": {
-            "description": "Source provenance",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object", "additionalProperties": true }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/events": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Preview reported events",
+        "summary": "Event severity summary",
+        "x-x402-price": "$0.01",
         "parameters": [
           {
-            "name": "state",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "string", "minLength": 2, "maxLength": 2 }
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "WARN event UUID",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Bounded event preview",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/events/recent": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Preview recent reported events",
-        "responses": {
-          "200": {
-            "description": "Bounded recent event preview",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/events/{id}": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Preview one reported event",
-        "parameters": [
-          { "$ref": "#/components/parameters/EventId" }
-        ],
-        "responses": {
-          "200": {
-            "description": "Event preview",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": { "$ref": "#/components/schemas/EventPreview" }
+                  "type": "object"
+                },
+                "example": {
+                  "composite_score": 0,
+                  "risk_tier": "moderate",
+                  "scored_at": "",
+                  "industry_classification": {
+                    "label": "Health Care and Social Assistance",
+                    "naics_sector": "62",
+                    "method": "explicit_naics",
+                    "confidence": "high",
+                    "coverage_note": "Industry derived from source-provided NAICS code."
                   }
                 }
               }
             }
           },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      }
-    },
-    "/company/{name}": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Preview events matching a company name",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "string" }
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Bounded event preview",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/state/{state}": {
-      "get": {
-        "tags": ["Public"],
-        "summary": "Preview events for a state",
-        "parameters": [
-          { "$ref": "#/components/parameters/State" }
-        ],
-        "responses": {
-          "200": {
-            "description": "Bounded event preview",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/EventPreviewCollection" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/events/{id}/severity": {
-      "get": {
-        "tags": ["Event Intelligence"],
-        "summary": "Retrieve event severity signal",
-        "x-x402-price": "$0.01",
-        "parameters": [
-          { "$ref": "#/components/parameters/EventId" }
-        ],
-        "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
         }
       }
     },
     "/events/{id}/history": {
       "get": {
-        "tags": ["Event Intelligence"],
-        "summary": "Retrieve event history",
+        "summary": "Event history",
         "x-x402-price": "$0.02",
         "parameters": [
-          { "$ref": "#/components/parameters/EventId" }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "WARN event UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "event_id": "",
+                  "version_count": 0,
+                  "versions": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/events/{id}/relationships": {
       "get": {
-        "tags": ["Event Intelligence"],
-        "summary": "Retrieve related events",
+        "summary": "Event relationship summary",
         "x-x402-price": "$0.02",
         "parameters": [
-          { "$ref": "#/components/parameters/EventId" }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "WARN event UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "event_id": "",
+                  "relationship_count": 0,
+                  "relationships": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/events/{id}/timeline": {
       "get": {
-        "tags": ["Event Intelligence"],
-        "summary": "Retrieve consolidated event timeline",
+        "summary": "Event timeline",
         "x-x402-price": "$0.05",
         "parameters": [
-          { "$ref": "#/components/parameters/EventId" }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "WARN event UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "event": {},
+                  "versions": [],
+                  "transitions": [],
+                  "relationships": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/events/{id}/company-intel": {
       "get": {
-        "tags": ["Company Intelligence"],
-        "summary": "Retrieve company context for an event",
+        "summary": "Company context",
         "x-x402-price": "$0.03",
         "parameters": [
-          { "$ref": "#/components/parameters/EventId" }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "WARN event UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "event_id": "",
+                  "company": {},
+                  "industry_classification": {
+                    "label": "Manufacturing",
+                    "naics_sector": "31-33",
+                    "method": "source_industry_text",
+                    "confidence": "medium",
+                    "coverage_note": "Industry inferred from source-provided industry text, not an explicit NAICS code."
+                  },
+                  "aliases": [],
+                  "locations": [],
+                  "intel": null
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/companies/search": {
       "get": {
-        "tags": ["Company Intelligence"],
-        "summary": "Search company intelligence",
+        "summary": "Company search",
         "x-x402-price": "$0.01",
         "parameters": [
           {
             "name": "q",
             "in": "query",
             "required": true,
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "integer" }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "integer" }
+            "description": "Company name search query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "data": [],
+                  "total": 0
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/companies/{id}": {
       "get": {
-        "tags": ["Company Intelligence"],
-        "summary": "Retrieve company profile",
+        "summary": "Company profile",
         "x-x402-price": "$0.05",
         "parameters": [
-          { "$ref": "#/components/parameters/CompanyId" }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Company UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "company": {},
+                  "scores": [],
+                  "recent_events": [],
+                  "locations": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/companies/{id}/intelligence": {
       "get": {
-        "tags": ["Company Intelligence"],
-        "summary": "Retrieve company intelligence summary",
+        "summary": "Company risk summary",
         "x-x402-price": "$0.05",
         "parameters": [
-          { "$ref": "#/components/parameters/CompanyId" }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Company UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "data": {
+                    "risk_tier": "moderate",
+                    "event_count": 0,
+                    "severity_avg": 0
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/radius/{zip}": {
       "get": {
-        "tags": ["Geospatial Intelligence"],
-        "summary": "Retrieve geographic radius intelligence",
+        "summary": "Nearby disruption events",
         "x-x402-price": "$0.05",
         "parameters": [
-          { "$ref": "#/components/parameters/Zip" },
-          { "$ref": "#/components/parameters/Radius" },
           {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "integer" }
-          },
-          { "$ref": "#/components/parameters/From" },
-          { "$ref": "#/components/parameters/To" },
-          {
-            "name": "minEmployees",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "integer" }
+            "name": "zip",
+            "in": "path",
+            "required": true,
+            "description": "5-digit US ZIP code",
+            "schema": {
+              "type": "string"
+            }
           },
           {
-            "name": "naics",
+            "name": "radius",
             "in": "query",
             "required": false,
-            "schema": { "type": "string" }
+            "description": "Radius in miles (max 250, default 50)",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "center": {},
+                  "radius_miles": 50,
+                  "data": [],
+                  "total": 0
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/territory/{zip}/disruption": {
       "get": {
-        "tags": ["Geospatial Intelligence"],
-        "summary": "Retrieve territory disruption summary",
+        "summary": "Territory disruption summary",
         "x-x402-price": "$0.10",
         "parameters": [
-          { "$ref": "#/components/parameters/Zip" },
-          { "$ref": "#/components/parameters/Radius" },
-          { "$ref": "#/components/parameters/From" },
-          { "$ref": "#/components/parameters/To" }
+          {
+            "name": "zip",
+            "in": "path",
+            "required": true,
+            "description": "5-digit US ZIP code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "description": "Radius in miles (max 500, default 100)",
+            "schema": {
+              "type": "number"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "summary": {
+                    "disruption_score": 0,
+                    "total_events": 0,
+                    "total_employees_affected": 0
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/regions/{state}": {
       "get": {
-        "tags": ["Regional Intelligence"],
-        "summary": "Retrieve regional summaries for a state",
+        "summary": "Regional disruption summaries",
         "x-x402-price": "$0.02",
         "parameters": [
-          { "$ref": "#/components/parameters/State" }
+          {
+            "name": "state",
+            "in": "path",
+            "required": true,
+            "description": "2-letter state code",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "state": "",
+                  "county_count": 0,
+                  "data": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/regions/{state}/{county}": {
       "get": {
-        "tags": ["Regional Intelligence"],
-        "summary": "Retrieve a county summary",
+        "summary": "County disruption summary",
         "x-x402-price": "$0.01",
         "parameters": [
-          { "$ref": "#/components/parameters/State" },
+          {
+            "name": "state",
+            "in": "path",
+            "required": true,
+            "description": "2-letter state code",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "county",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "description": "County name",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "data": {
+                    "severity_avg": 0,
+                    "event_count": 0,
+                    "total_employees": 0
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/jurisdictions": {
       "get": {
-        "tags": ["Regional Intelligence"],
-        "summary": "Retrieve jurisdiction summaries",
+        "summary": "Jurisdiction activity summaries",
         "x-x402-price": "$0.02",
+        "parameters": [],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "count": 0,
+                  "data": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
         }
       }
     },
     "/jurisdictions/{state}": {
       "get": {
-        "tags": ["Regional Intelligence"],
-        "summary": "Retrieve a jurisdiction summary",
+        "summary": "State activity summary",
         "x-x402-price": "$0.01",
         "parameters": [
-          { "$ref": "#/components/parameters/State" }
+          {
+            "name": "state",
+            "in": "path",
+            "required": true,
+            "description": "2-letter state code",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "$ref": "#/components/responses/IntelligenceResponse" },
-          "402": { "$ref": "#/components/responses/PaymentRequired" },
-          "404": { "$ref": "#/components/responses/NotFound" }
-        }
-      }
-    }
-  },
-  "components": {
-    "parameters": {
-      "EventId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "schema": { "type": "string" }
-      },
-      "CompanyId": {
-        "name": "id",
-        "in": "path",
-        "required": true,
-        "schema": { "type": "string" }
-      },
-      "State": {
-        "name": "state",
-        "in": "path",
-        "required": true,
-        "schema": { "type": "string", "minLength": 2, "maxLength": 2 }
-      },
-      "Zip": {
-        "name": "zip",
-        "in": "path",
-        "required": true,
-        "schema": { "type": "string", "pattern": "^[0-9]{5}$" }
-      },
-      "Radius": {
-        "name": "radius",
-        "in": "query",
-        "required": false,
-        "description": "Radius in miles.",
-        "schema": { "type": "number" }
-      },
-      "From": {
-        "name": "from",
-        "in": "query",
-        "required": false,
-        "schema": { "type": "string", "format": "date" }
-      },
-      "To": {
-        "name": "to",
-        "in": "query",
-        "required": false,
-        "schema": { "type": "string", "format": "date" }
-      }
-    },
-    "schemas": {
-      "HealthResponse": {
-        "type": "object",
-        "properties": {
-          "status": { "type": "string" },
-          "service": { "type": "string" },
-          "version": { "type": "string" },
-          "timestamp": { "type": "string", "format": "date-time" }
-        }
-      },
-      "EventPreview": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "source_state": { "type": "string" },
-          "company_name": { "type": "string" },
-          "location_city": { "type": "string", "nullable": true },
-          "location_county": { "type": "string", "nullable": true },
-          "location_state": { "type": "string", "nullable": true },
-          "employees_affected": { "type": "integer", "nullable": true },
-          "notice_date": { "type": "string", "format": "date", "nullable": true },
-          "effective_date": { "type": "string", "format": "date", "nullable": true },
-          "action_type": { "type": "string", "nullable": true }
-        }
-      },
-      "EventPreviewCollection": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/EventPreview" }
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "data": {
+                    "jurisdiction": "",
+                    "total_events": 0
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
           }
         }
       }
     },
-    "responses": {
-      "PaymentRequired": {
-        "description": "x402 payment authorization required. Use response metadata for active terms."
-      },
-      "NotFound": {
-        "description": "Requested resource was not found."
-      },
-      "IntelligenceResponse": {
-        "description": "Requested intelligence response.",
-        "content": {
-          "application/json": {
-            "schema": { "type": "object", "additionalProperties": true }
+    "/watchlists/{id}/preview": {
+      "get": {
+        "summary": "Company watchlist event preview",
+        "x-x402-price": "$0.03",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Watchlist UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ownerKey",
+            "in": "query",
+            "required": false,
+            "description": "Caller owner scope for the watchlist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum preview row count (max 100, default 25)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "watchlist": {},
+                  "items": [],
+                  "preview": [],
+                  "total_previewed": 0
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/watchlists/{id}/preview.csv": {
+      "get": {
+        "summary": "Company watchlist event preview CSV",
+        "x-x402-price": "$0.05",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Watchlist UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ownerKey",
+            "in": "query",
+            "required": false,
+            "description": "Caller owner scope for the watchlist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum preview row count (max 100, default 25)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "event_id,matched_item_id,matched_query,matched_company_id,company_id,company_name"
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
           }
         }
       }
     }
   },
   "x-x402": {
-    "discoveryUrl": "https://warn.forgemesh.io/.well-known/x402.json",
-    "terms": "Payment network and receiving address are provided by the live discovery response and per-request payment challenge."
+    "network": "eip155:8453",
+    "payTo": "0xA8774fACfD3Da2EA11f240C977b9973D78aDFCFe",
+    "facilitator": "https://x402.org/facilitator/"
   }
 }

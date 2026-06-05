@@ -1,19 +1,35 @@
 {
-  "example": true,
   "version": 2,
   "name": "Disruption Intelligence",
   "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events.",
-  "resourceServerUrl": "https://warn.forgemesh.io",
-  "network": "<live-network-from-hosted-manifest>",
-  "payTo": "<live-payment-address-from-hosted-manifest>",
+  "resourceServerUrl": "https://disruption.forgemesh.io",
+  "network": "eip155:8453",
+  "payTo": "0xA8774fACfD3Da2EA11f240C977b9973D78aDFCFe",
   "endpoints": [
     {
       "method": "GET",
       "path": "/events/:id/severity",
       "price": "$0.01",
-      "description": "Event severity signal",
+      "description": "Event severity summary",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "WARN event UUID"
+        }
+      },
+      "output_example": {
+        "composite_score": 0,
+        "risk_tier": "moderate",
+        "scored_at": "",
+        "industry_classification": {
+          "label": "Health Care and Social Assistance",
+          "naics_sector": "62",
+          "method": "explicit_naics",
+          "confidence": "high",
+          "coverage_note": "Industry derived from source-provided NAICS code."
+        }
       }
     },
     {
@@ -22,16 +38,36 @@
       "price": "$0.02",
       "description": "Event history",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "WARN event UUID"
+        }
+      },
+      "output_example": {
+        "event_id": "",
+        "version_count": 0,
+        "versions": []
       }
     },
     {
       "method": "GET",
       "path": "/events/:id/relationships",
       "price": "$0.02",
-      "description": "Related events",
+      "description": "Event relationship summary",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "WARN event UUID"
+        }
+      },
+      "output_example": {
+        "event_id": "",
+        "relationship_count": 0,
+        "relationships": []
       }
     },
     {
@@ -40,16 +76,46 @@
       "price": "$0.05",
       "description": "Event timeline",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "WARN event UUID"
+        }
+      },
+      "output_example": {
+        "event": {},
+        "versions": [],
+        "transitions": [],
+        "relationships": []
       }
     },
     {
       "method": "GET",
       "path": "/events/:id/company-intel",
       "price": "$0.03",
-      "description": "Company context for an event",
+      "description": "Company context",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "WARN event UUID"
+        }
+      },
+      "output_example": {
+        "event_id": "",
+        "company": {},
+        "industry_classification": {
+          "label": "Manufacturing",
+          "naics_sector": "31-33",
+          "method": "source_industry_text",
+          "confidence": "medium",
+          "coverage_note": "Industry inferred from source-provided industry text, not an explicit NAICS code."
+        },
+        "aliases": [],
+        "locations": [],
+        "intel": null
       }
     },
     {
@@ -58,7 +124,15 @@
       "price": "$0.01",
       "description": "Company search",
       "params": {
-        "q": { "type": "string", "required": true }
+        "q": {
+          "type": "string",
+          "required": true,
+          "description": "Company name search query"
+        }
+      },
+      "output_example": {
+        "data": [],
+        "total": 0
       }
     },
     {
@@ -67,26 +141,64 @@
       "price": "$0.05",
       "description": "Company profile",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "Company UUID"
+        }
+      },
+      "output_example": {
+        "company": {},
+        "scores": [],
+        "recent_events": [],
+        "locations": []
       }
     },
     {
       "method": "GET",
       "path": "/companies/:id/intelligence",
       "price": "$0.05",
-      "description": "Company intelligence",
+      "description": "Company risk summary",
       "params": {
-        "id": { "type": "string", "in": "path", "required": true }
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "Company UUID"
+        }
+      },
+      "output_example": {
+        "data": {
+          "risk_tier": "moderate",
+          "event_count": 0,
+          "severity_avg": 0
+        }
       }
     },
     {
       "method": "GET",
       "path": "/radius/:zip",
       "price": "$0.05",
-      "description": "Geographic radius intelligence",
+      "description": "Nearby disruption events",
       "params": {
-        "zip": { "type": "string", "in": "path", "required": true },
-        "radius": { "type": "number", "required": false }
+        "zip": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "5-digit US ZIP code"
+        },
+        "radius": {
+          "type": "number",
+          "required": false,
+          "description": "Radius in miles (max 250, default 50)"
+        }
+      },
+      "output_example": {
+        "center": {},
+        "radius_miles": 50,
+        "data": [],
+        "total": 0
       }
     },
     {
@@ -95,44 +207,157 @@
       "price": "$0.10",
       "description": "Territory disruption summary",
       "params": {
-        "zip": { "type": "string", "in": "path", "required": true },
-        "radius": { "type": "number", "required": false }
+        "zip": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "5-digit US ZIP code"
+        },
+        "radius": {
+          "type": "number",
+          "required": false,
+          "description": "Radius in miles (max 500, default 100)"
+        }
+      },
+      "output_example": {
+        "summary": {
+          "disruption_score": 0,
+          "total_events": 0,
+          "total_employees_affected": 0
+        }
       }
     },
     {
       "method": "GET",
       "path": "/regions/:state",
       "price": "$0.02",
-      "description": "Regional summaries",
+      "description": "Regional disruption summaries",
       "params": {
-        "state": { "type": "string", "in": "path", "required": true }
+        "state": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "2-letter state code"
+        }
+      },
+      "output_example": {
+        "state": "",
+        "county_count": 0,
+        "data": []
       }
     },
     {
       "method": "GET",
       "path": "/regions/:state/:county",
       "price": "$0.01",
-      "description": "County summary",
+      "description": "County disruption summary",
       "params": {
-        "state": { "type": "string", "in": "path", "required": true },
-        "county": { "type": "string", "in": "path", "required": true }
+        "state": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "2-letter state code"
+        },
+        "county": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "County name"
+        }
+      },
+      "output_example": {
+        "data": {
+          "severity_avg": 0,
+          "event_count": 0,
+          "total_employees": 0
+        }
       }
     },
     {
       "method": "GET",
       "path": "/jurisdictions",
       "price": "$0.02",
-      "description": "Jurisdiction summaries",
-      "params": {}
+      "description": "Jurisdiction activity summaries",
+      "params": {},
+      "output_example": {
+        "count": 0,
+        "data": []
+      }
     },
     {
       "method": "GET",
       "path": "/jurisdictions/:state",
       "price": "$0.01",
-      "description": "Jurisdiction summary",
+      "description": "State activity summary",
       "params": {
-        "state": { "type": "string", "in": "path", "required": true }
+        "state": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "2-letter state code"
+        }
+      },
+      "output_example": {
+        "data": {
+          "jurisdiction": "",
+          "total_events": 0
+        }
       }
+    },
+    {
+      "method": "GET",
+      "path": "/watchlists/:id/preview",
+      "price": "$0.03",
+      "description": "Company watchlist event preview",
+      "params": {
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "Watchlist UUID"
+        },
+        "ownerKey": {
+          "type": "string",
+          "required": false,
+          "description": "Caller owner scope for the watchlist"
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "description": "Maximum preview row count (max 100, default 25)"
+        }
+      },
+      "output_example": {
+        "watchlist": {},
+        "items": [],
+        "preview": [],
+        "total_previewed": 0
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/watchlists/:id/preview.csv",
+      "price": "$0.05",
+      "description": "Company watchlist event preview CSV",
+      "params": {
+        "id": {
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "Watchlist UUID"
+        },
+        "ownerKey": {
+          "type": "string",
+          "required": false,
+          "description": "Caller owner scope for the watchlist"
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "description": "Maximum preview row count (max 100, default 25)"
+        }
+      },
+      "output_example": "event_id,matched_item_id,matched_query,matched_company_id,company_id,company_name"
     }
   ]
 }

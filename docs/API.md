@@ -1,15 +1,15 @@
 # API Reference
 
-**Base URL:** `https://warn.forgemesh.io`
+**Base URL:** `https://disruption.forgemesh.io`
 
-Disruption Intelligence exposes public discovery and preview routes alongside x402-priced intelligence routes. The hosted discovery documents are the authoritative current contract:
+Disruption Intelligence exposes free discovery and preview routes alongside x402-priced intelligence routes. The hosted discovery documents are the authoritative current contract:
 
 ```bash
-curl "https://warn.forgemesh.io/openapi.json"
-curl "https://warn.forgemesh.io/.well-known/x402.json"
+curl "https://disruption.forgemesh.io/openapi.json"
+curl "https://disruption.forgemesh.io/.well-known/x402.json"
 ```
 
-## Public Routes
+## Free Routes
 
 | Method | Path | Output |
 | --- | --- | --- |
@@ -25,7 +25,7 @@ curl "https://warn.forgemesh.io/.well-known/x402.json"
 | `GET` | `/openapi.json` | Machine-readable API contract. |
 | `GET` | `/.well-known/x402.json` | Machine-readable x402 catalog. |
 
-Public event previews may include identifiers, jurisdiction, company name, location, reported employee impact, relevant dates, and action category.
+Free event previews may include identifiers, jurisdiction, company name, location, reported employee impact, relevant dates, and action category.
 
 ## Paid Routes
 
@@ -33,11 +33,11 @@ Paid endpoints return an x402 payment challenge when called without payment auth
 
 | Method | Path | Listed price | Output |
 | --- | --- | ---: | --- |
-| `GET` | `/events/:id/severity` | $0.01 | Severity signal and supporting response fields. |
+| `GET` | `/events/:id/severity` | $0.01 | Severity signal, supporting response fields, and event industry classification when available. |
 | `GET` | `/events/:id/history` | $0.02 | Event version history. |
 | `GET` | `/events/:id/relationships` | $0.02 | Related event links. |
 | `GET` | `/events/:id/timeline` | $0.05 | Consolidated event timeline. |
-| `GET` | `/events/:id/company-intel` | $0.03 | Company context associated with an event. |
+| `GET` | `/events/:id/company-intel` | $0.03 | Company context associated with an event, including event industry classification when available. |
 | `GET` | `/companies/search` | $0.01 | Company search results. |
 | `GET` | `/companies/:id` | $0.05 | Company intelligence profile. |
 | `GET` | `/companies/:id/intelligence` | $0.05 | Company intelligence summary. |
@@ -49,6 +49,22 @@ Paid endpoints return an x402 payment challenge when called without payment auth
 | `GET` | `/jurisdictions/:state` | $0.01 | Single jurisdiction summary. |
 
 Listed prices are informational; clients must rely on active payment requirements returned by the hosted service.
+
+## Industry Classification Fields
+
+Paid event-level responses can include `industry_classification` when event context is available. Fields include:
+
+| Field | Description |
+| --- | --- |
+| `label` | Broad industry label when classification is available. |
+| `naics_sector` | Two-digit NAICS sector or supported sector range. |
+| `naics_code` | Source-provided NAICS code or range when present. |
+| `method` | `explicit_naics`, `explicit_naics_range`, `source_industry_text`, or `unclassified`. |
+| `confidence` | `high`, `medium`, `low`, or `none`. |
+| `source_text` | Short source-provided industry text when classification came from source text. |
+| `coverage_note` | Caveat explaining derivation and data quality. |
+
+Agents should treat `method`, `confidence`, and `coverage_note` as part of the paid signal. Full-corpus industry rankings remain separate from this event-level response field.
 
 ## Query Parameters
 
@@ -92,4 +108,4 @@ Listed prices are informational; clients must rely on active payment requirement
 | `404` | Requested entity or geographic key was not found. |
 | `500` | Service could not complete the request. |
 
-This public reference documents responses and access patterns only; it does not publish the hosted engine implementation.
+This reference documents responses and access patterns only; it does not publish the hosted engine implementation.

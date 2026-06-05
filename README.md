@@ -4,7 +4,7 @@ Geospatial disruption intelligence API built from WARN filings, labor signals, a
 
 Disruption Intelligence gives software agents and developers structured access to reported regional workforce disruptions, event context, company signals, and geographic rollups through a hosted API.
 
-**Hosted API:** [https://warn.forgemesh.io](https://warn.forgemesh.io)
+**Hosted API:** [https://disruption.forgemesh.io](https://disruption.forgemesh.io)
 
 ## What You Can Query
 
@@ -16,7 +16,7 @@ Disruption Intelligence gives software agents and developers structured access t
 ## Start With Public Endpoints
 
 ```bash
-API_BASE=https://warn.forgemesh.io
+API_BASE=https://disruption.forgemesh.io
 
 curl "$API_BASE/health"
 curl "$API_BASE/stats"
@@ -30,17 +30,22 @@ curl "$API_BASE/.well-known/x402.json"
 Paid endpoints use x402 payment discovery. An unpaid request returns a `402 Payment Required` response describing the active payment terms; an x402-capable client can satisfy those terms and retry the request.
 
 ```bash
-curl -i "https://warn.forgemesh.io/territory/77002/disruption?radius=50"
+curl -i "https://disruption.forgemesh.io/territory/77002/disruption?radius=50"
 ```
 
 | Capability | Example endpoint | Listed price |
 | --- | --- | ---: |
 | Event severity signal | `GET /events/:id/severity` | $0.01 |
+| Event company intelligence | `GET /events/:id/company-intel` | $0.03 |
 | Company intelligence | `GET /companies/:id/intelligence` | $0.05 |
 | Geographic radius intelligence | `GET /radius/:zip` | $0.05 |
 | Territory disruption summary | `GET /territory/:zip/disruption` | $0.10 |
 
 Payment terms returned by the live API are authoritative.
+
+## Industry Classification Output
+
+Paid event-level responses can include `industry_classification`, with the industry label, NAICS fields when present, derivation method, confidence, source text when relevant, and a coverage note. This is response metadata from the hosted API; it does not imply every WARN source has complete industry coverage.
 
 ## Documentation
 
@@ -48,11 +53,11 @@ Payment terms returned by the live API are authoritative.
 - [API reference](docs/API.md)
 - [x402 payment discovery](docs/X402.md)
 - [MCP direction](docs/MCP.md)
-- [Public OpenAPI contract](openapi.json)
+- [OpenAPI contract](openapi.json)
 
 ## Repository Scope
 
-This repository documents the hosted Disruption Intelligence API and public integration surface. The hosted intelligence engine and its data-processing implementation are not distributed here.
+This repository documents the hosted Disruption Intelligence API and agent-facing integration surface. The hosted intelligence engine and its data-processing implementation are not distributed here.
 
 ## License
 
