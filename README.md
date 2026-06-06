@@ -11,6 +11,7 @@ Disruption Intelligence gives software agents and developers structured access t
 - Public health, aggregate statistics, source provenance, and bounded event previews.
 - Paid event intelligence, history, and related-event views.
 - Paid company, regional, jurisdiction, radius, and territory intelligence.
+- Free gold inventory search plus paid gold convergence signals and operational sector-impact unlocks.
 - Machine-readable OpenAPI and x402 discovery metadata.
 
 ## Start With Public Endpoints
@@ -40,6 +41,9 @@ curl -i "https://disruption.forgemesh.io/territory/77002/disruption?radius=50"
 | Company intelligence | `GET /companies/:id/intelligence` | $0.05 |
 | Geographic radius intelligence | `GET /radius/:zip` | $0.05 |
 | Territory disruption summary | `GET /territory/:zip/disruption` | $0.10 |
+| Gold convergence signals | `GET /gold/signals` | $0.10 |
+| Gold commercial brief | `GET /gold/brief` | $0.10 |
+| Gold sector-impact unlock | `GET /gold/signals/:id/sector-impacts` | $0.15 |
 
 Payment terms returned by the live API are authoritative.
 
