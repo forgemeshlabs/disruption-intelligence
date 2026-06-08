@@ -17,10 +17,10 @@ The MCP package is published as `@forgemeshlabs/disruption-intelligence-mcp`. It
 | `get_event_severity` | Paid event severity signal with industry classification after settlement. |
 | `get_event_company_intel` | Paid event company context with industry classification after settlement. |
 | `get_event_timeline` | Paid event context over time. |
-| `search_gold_inventory` | Free inventory-only search for gold convergence signal counts and unlock pricing. |
-| `get_gold_signals` | Paid gold convergence signals after settlement; challenge-first by default. |
-| `get_gold_brief` | Paid commercial convergence brief after settlement; challenge-first by default. |
-| `get_gold_sector_impacts` | Paid operational sector-impact unlock for one gold signal after settlement; challenge-first by default. |
+| `search_gold_inventory` | Compatibility tool name for free inventory-only Ripple Signal counts and unlock pricing. |
+| `get_gold_signals` | Compatibility tool name for paid Ripple Signals after settlement; challenge-first by default. |
+| `get_gold_brief` | Compatibility tool name for a paid Disruption Intelligence Ripple Report after settlement; challenge-first by default. |
+| `get_gold_sector_impacts` | Compatibility tool name for paid Ripple Paths after settlement; challenge-first by default. |
 
 ## Integration Principles
 
@@ -29,7 +29,7 @@ The MCP package is published as `@forgemeshlabs/disruption-intelligence-mcp`. It
 - Tool responses should preserve provenance and response metadata returned by the API.
 - Receiving addresses and live payment terms should be discovered at request time.
 - Event-level paid responses can include `industry_classification`; agents should preserve `method`, `confidence`, and `coverage_note`.
-- Free gold inventory tools should not expose signal IDs, commercial angles, source mix, or raw evidence. Paid gold tools expose distilled signals, sector-impact inventory, and optional operational-impact detail unlocks.
+- Free Ripple inventory tools should not expose signal IDs, commercial angles, source mix, or raw evidence. Paid Ripple tools expose distilled signals, Ripple Path inventory, and optional operational-impact detail unlocks.
 
 ## Current Integration Path
 

@@ -18,7 +18,8 @@ curl "https://disruption.forgemesh.io/.well-known/x402.json"
 | `GET` | `/sources` | Public provenance information. |
 | `GET` | `/events` | Bounded event preview; optional `state` query parameter. |
 | `GET` | `/events/recent` | Bounded preview of recent records. |
-| `GET` | `/gold/search` | Inventory-only search for gold/watchlist convergence signals, with counts and unlock pricing. |
+| `GET` | `/ripple/search` | Inventory-only search for Ripple Signals, with counts and unlock pricing. |
+| `GET` | `/gold/search` | Legacy alias for `/ripple/search`; internal gold state is not the product name. |
 | `GET` | `/events/:id` | Single basic event preview. |
 | `GET` | `/company/:name` | Bounded event preview matched by company name. |
 | `GET` | `/state/:state` | Bounded event preview for a state. |
@@ -48,9 +49,12 @@ Paid endpoints return an x402 payment challenge when called without payment auth
 | `GET` | `/regions/:state/:county` | $0.01 | Single regional summary. |
 | `GET` | `/jurisdictions` | $0.02 | Jurisdiction activity summaries. |
 | `GET` | `/jurisdictions/:state` | $0.01 | Single jurisdiction summary. |
-| `GET` | `/gold/signals` | $0.10 | Distilled commercial convergence signals with confidence, compact evidence labels, and sector-impact inventory. |
-| `GET` | `/gold/brief` | $0.10 | Bounded commercial convergence brief with inventory, recommended actions, and delivered signals. |
-| `GET` | `/gold/signals/:id/sector-impacts` | $0.15 | Operational spend paths and downstream business sectors affected by one gold signal. |
+| `GET` | `/ripple/signals` | $0.10 | Ripple Signals with confidence, compact evidence labels, and Ripple Path inventory. |
+| `GET` | `/ripple/brief` | $0.10 | Disruption Intelligence Ripple Report with inventory, recommended actions, and delivered signals. |
+| `GET` | `/ripple/signals/:id/sector-impacts` | $0.15 | Ripple Paths: operational spend paths and downstream business sectors affected by one signal. |
+| `GET` | `/gold/signals` | $0.10 | Legacy alias for `/ripple/signals`. |
+| `GET` | `/gold/brief` | $0.10 | Legacy alias for `/ripple/brief`. |
+| `GET` | `/gold/signals/:id/sector-impacts` | $0.15 | Legacy alias for `/ripple/signals/:id/sector-impacts`. |
 
 Listed prices are informational; clients must rely on active payment requirements returned by the hosted service.
 
@@ -70,9 +74,9 @@ Paid event-level responses can include `industry_classification` when event cont
 
 Agents should treat `method`, `confidence`, and `coverage_note` as part of the paid signal. Full-corpus industry rankings remain separate from this event-level response field.
 
-## Gold Signal Boundary
+## Ripple Boundary
 
-`GET /gold/search` is intentionally free and inventory-only. It should be used to discover whether relevant paid signal inventory exists, not to reconstruct the underlying intelligence. Paid gold endpoints return distilled commercial intelligence, compact evidence categories, signal confidence, and upsell inventory for sector-impact detail. Raw provider rows, source queries, matching rules, and internal scoring details are not part of the public contract.
+`GET /ripple/search` is intentionally free and inventory-only. It should be used to discover whether relevant paid Ripple inventory exists, not to reconstruct the underlying intelligence. Paid Ripple endpoints return distilled commercial intelligence, compact evidence categories, signal confidence, and upsell inventory for sector-impact detail. Raw provider rows, source queries, matching rules, and internal scoring details are not part of the public contract.
 
 ## Query Parameters
 
