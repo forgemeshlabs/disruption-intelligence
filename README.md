@@ -42,7 +42,7 @@ curl -i "https://disruption.forgemesh.io/territory/77002/disruption?radius=50"
 | Geographic radius intelligence | `GET /radius/:zip` | $0.05 |
 | Territory disruption summary | `GET /territory/:zip/disruption` | $0.10 |
 | Ripple Signals | `GET /ripple/signals` | $0.10 |
-| Disruption Intelligence Ripple Report | `GET /ripple/brief` | $0.10 |
+| Disruption Intelligence Ripple Report | `GET /ripple/brief` | $0.25 |
 | Ripple Paths | `GET /ripple/signals/:id/sector-impacts` | $0.15 |
 
 Payment terms returned by the live API are authoritative.

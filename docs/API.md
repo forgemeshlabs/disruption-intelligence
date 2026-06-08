@@ -50,10 +50,10 @@ Paid endpoints return an x402 payment challenge when called without payment auth
 | `GET` | `/jurisdictions` | $0.02 | Jurisdiction activity summaries. |
 | `GET` | `/jurisdictions/:state` | $0.01 | Single jurisdiction summary. |
 | `GET` | `/ripple/signals` | $0.10 | Ripple Signals with confidence, compact evidence labels, and Ripple Path inventory. |
-| `GET` | `/ripple/brief` | $0.10 | Disruption Intelligence Ripple Report with inventory, recommended actions, and delivered signals. |
+| `GET` | `/ripple/brief` | $0.25 | Disruption Intelligence Ripple Report with inventory, recommended actions, and delivered signals. |
 | `GET` | `/ripple/signals/:id/sector-impacts` | $0.15 | Ripple Paths: operational spend paths and downstream business sectors affected by one signal. |
 | `GET` | `/gold/signals` | $0.10 | Legacy alias for `/ripple/signals`. |
-| `GET` | `/gold/brief` | $0.10 | Legacy alias for `/ripple/brief`. |
+| `GET` | `/gold/brief` | $0.25 | Legacy alias for `/ripple/brief`. |
 | `GET` | `/gold/signals/:id/sector-impacts` | $0.15 | Legacy alias for `/ripple/signals/:id/sector-impacts`. |
 
 Listed prices are informational; clients must rely on active payment requirements returned by the hosted service.
