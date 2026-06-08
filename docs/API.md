@@ -19,7 +19,7 @@ curl "https://disruption.forgemesh.io/.well-known/x402.json"
 | `GET` | `/events` | Bounded event preview; optional `state` query parameter. |
 | `GET` | `/events/recent` | Bounded preview of recent records. |
 | `GET` | `/ripple/search` | Inventory-only search for Ripple Signals, with counts and unlock pricing. |
-| `GET` | `/gold/search` | Legacy alias for `/ripple/search`; internal gold state is not the product name. |
+| `GET` | `/gold/search` | Legacy alias for `/ripple/search`; prefer the Ripple route in new integrations. |
 | `GET` | `/events/:id` | Single basic event preview. |
 | `GET` | `/company/:name` | Bounded event preview matched by company name. |
 | `GET` | `/state/:state` | Bounded event preview for a state. |
