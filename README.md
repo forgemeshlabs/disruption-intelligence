@@ -11,7 +11,7 @@ Disruption Intelligence gives software agents and developers structured access t
 - Public health, aggregate statistics, source provenance, and bounded event previews.
 - Paid event intelligence, history, and related-event views.
 - Paid company, regional, jurisdiction, radius, and territory intelligence.
-- Free Ripple inventory search plus paid Ripple Signals, Ripple Paths, and Disruption Intelligence Ripple Reports.
+- Free Ripple inventory search plus paid location-only Ripple Index cards, Ripple Signals, Ripple Paths, and Disruption Intelligence Ripple Reports.
 - Machine-readable OpenAPI and x402 discovery metadata.
 
 ## Start With Public Endpoints
@@ -41,6 +41,7 @@ curl -i "https://disruption.forgemesh.io/territory/77002/disruption?radius=50"
 | Company intelligence | `GET /companies/:id/intelligence` | $0.05 |
 | Geographic radius intelligence | `GET /radius/:zip` | $0.05 |
 | Territory disruption summary | `GET /territory/:zip/disruption` | $0.10 |
+| Ripple Index | `GET /ripple/index` | $0.01 |
 | Ripple Signals | `GET /ripple/signals` | $0.10 |
 | Disruption Intelligence Ripple Report | `GET /ripple/brief` | $0.25 |
 | Ripple Paths | `GET /ripple/signals/:id/sector-impacts` | $0.15 |

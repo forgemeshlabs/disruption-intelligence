@@ -49,9 +49,11 @@ Paid endpoints return an x402 payment challenge when called without payment auth
 | `GET` | `/regions/:state/:county` | $0.01 | Single regional summary. |
 | `GET` | `/jurisdictions` | $0.02 | Jurisdiction activity summaries. |
 | `GET` | `/jurisdictions/:state` | $0.01 | Single jurisdiction summary. |
+| `GET` | `/ripple/index` | $0.01 | Location-only Ripple index cards with signal IDs, regions, states, freshness/depth/confidence/score bands, and unlock URLs. |
 | `GET` | `/ripple/signals` | $0.10 | Ripple Signals with confidence, compact evidence labels, and Ripple Path inventory. |
 | `GET` | `/ripple/brief` | $0.25 | Disruption Intelligence Ripple Report with inventory, recommended actions, and delivered signals. |
 | `GET` | `/ripple/signals/:id/sector-impacts` | $0.15 | Ripple Paths: operational spend paths and downstream business sectors affected by one signal. |
+| `GET` | `/gold/index` | $0.01 | Legacy alias for `/ripple/index`. |
 | `GET` | `/gold/signals` | $0.10 | Legacy alias for `/ripple/signals`. |
 | `GET` | `/gold/brief` | $0.25 | Legacy alias for `/ripple/brief`. |
 | `GET` | `/gold/signals/:id/sector-impacts` | $0.15 | Legacy alias for `/ripple/signals/:id/sector-impacts`. |
@@ -76,7 +78,11 @@ Agents should treat `method`, `confidence`, and `coverage_note` as part of the p
 
 ## Ripple Boundary
 
-`GET /ripple/search` is intentionally free and inventory-only. It should be used to discover whether relevant paid Ripple inventory exists, not to reconstruct the underlying intelligence. Paid Ripple endpoints return distilled commercial intelligence, compact evidence categories, signal confidence, and upsell inventory for sector-impact detail. Raw provider rows, source queries, matching rules, and internal scoring details are not part of the public contract.
+`GET /ripple/search` is intentionally free and inventory-only. It should be used to discover whether relevant paid Ripple inventory exists, not to reconstruct the underlying intelligence.
+
+`GET /ripple/index` is a low-cost location-only index for choosing where to dig next. It can expose signal IDs, event IDs, regions, states, signal types, freshness/depth/confidence/score bands, and unlock URLs. It withholds company names, employee counts, commercial angles, sector names, spend areas, source records, and impact paths.
+
+Paid Ripple detail endpoints return distilled commercial intelligence, compact evidence categories, signal confidence, and upsell inventory for sector-impact detail. Raw provider rows, source queries, matching rules, and internal scoring details are not part of the public contract.
 
 ## Query Parameters
 

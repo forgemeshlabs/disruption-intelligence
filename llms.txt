@@ -1,6 +1,6 @@
 # disruption.forgemesh.io - Disruption Intelligence
 > Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events.
-> 14 paid endpoints from $0.01-$0.10 per call. Base mainnet (eip155:8453). No API key needed.
+> Paid x402 endpoints from $0.01-$0.25 per call. Base mainnet (eip155:8453). No API key needed.
 
 ## Event Intelligence
 GET /events/:id/severity — $0.01 — Event severity summary
@@ -19,6 +19,14 @@ GET /jurisdictions — $0.02 — Jurisdiction activity summaries
 GET /jurisdictions/:state — $0.01 — State activity summary
 GET /watchlists/:id/preview — $0.03 — Company watchlist event preview
 GET /watchlists/:id/preview.csv — $0.05 — Company watchlist event preview CSV
+GET /ripple/index — $0.01 — Location-only Ripple signal index
+GET /ripple/signals — $0.10 — Ripple Signals
+GET /ripple/brief — $0.25 — Disruption Intelligence Ripple Report
+GET /ripple/signals/:id/sector-impacts — $0.15 — Ripple Paths for one signal
+GET /gold/index — $0.01 — Legacy alias for Ripple Index
+GET /gold/signals — $0.10 — Legacy alias for Ripple Signals
+GET /gold/brief — $0.25 — Legacy alias for Ripple Report
+GET /gold/signals/:id/sector-impacts — $0.15 — Legacy alias for Ripple Paths
 
 ## Free Endpoints
 GET /health — Service availability

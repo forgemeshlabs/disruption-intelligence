@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Disruption Intelligence",
+    "title": "Disruption Intelligence Ripple API",
     "version": "1.0.0",
-    "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events. Pay per call in USDC on Base."
+    "description": "Geospatial disruption intelligence API built from WARN filings, labor signals, and regional economic events. Ripple endpoints explain downstream business effects. Pay per call in USDC on Base."
   },
   "servers": [
     {
@@ -169,7 +169,7 @@
     },
     "/events/{id}/company-intel": {
       "get": {
-        "summary": "Company context",
+        "summary": "Company context with sector impact paths",
         "x-x402-price": "$0.03",
         "parameters": [
           {
@@ -200,9 +200,78 @@
                     "confidence": "medium",
                     "coverage_note": "Industry inferred from source-provided industry text, not an explicit NAICS code."
                   },
+                  "business_sector_impacts": [
+                    {
+                      "sector": "suppliers, tooling, and maintenance vendors",
+                      "impact_path": "production changes can affect parts suppliers, tooling, maintenance contracts, packaging, and industrial services",
+                      "confidence": "high"
+                    }
+                  ],
                   "aliases": [],
                   "locations": [],
                   "intel": null
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/companies/names": {
+      "get": {
+        "summary": "Company name unlock",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional employer-name search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "Optional 2-letter state code",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum company names to return (max 25, default 10)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "company_name_unlock",
+                  "count": 1,
+                  "companies": [
+                    {
+                      "company_id": "",
+                      "name": "Example Employer Inc.",
+                      "profile_endpoint": "/companies/{id}",
+                      "intelligence_endpoint": "/companies/{id}/intelligence"
+                    }
+                  ]
                 }
               }
             }
@@ -289,7 +358,7 @@
     },
     "/companies/{id}/intelligence": {
       "get": {
-        "summary": "Company risk summary",
+        "summary": "Company risk summary with business-sector impact paths",
         "x-x402-price": "$0.05",
         "parameters": [
           {
@@ -314,7 +383,14 @@
                   "data": {
                     "risk_tier": "moderate",
                     "event_count": 0,
-                    "severity_avg": 0
+                    "severity_avg": 0,
+                    "business_sector_impacts": [
+                      {
+                        "sector": "staffing and recruiting",
+                        "impact_path": "worker displacement creates short-window hiring, temp labor, and competitor poaching opportunities",
+                        "confidence": "medium"
+                      }
+                    ]
                   }
                 }
               }
@@ -668,6 +744,552 @@
                   "type": "string"
                 },
                 "example": "event_id,matched_item_id,matched_query,matched_company_id,company_id,company_name"
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/gold/index": {
+      "get": {
+        "summary": "Legacy alias for the location-only Ripple signal index",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional region, state, or broad signal search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "description": "all, gold, or watchlist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum index cards to return (max 25, default 10)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "ripple_signal_index",
+                  "legacy_route_family": "gold",
+                  "count": 10,
+                  "navigation": {
+                    "message": "Location-only Ripple index. Company names, employee counts, commercial angles, sector names, spend areas, and impact paths are withheld until a paid signal or sector-impact unlock.",
+                    "next_step": "Use unlock.sector_impacts for detailed downstream sector/vendor impact paths, or use q on /ripple/signals when you want a focused paid signal set."
+                  },
+                  "signals": [
+                    {
+                      "signal_id": "00000000-0000-0000-0000-000000000000",
+                      "event_id": "00000000-0000-0000-0000-000000000000",
+                      "region": "San Mateo County, CA",
+                      "state": "CA",
+                      "signal_type": "company_disruption_pattern",
+                      "depth": "high",
+                      "freshness": "fresh",
+                      "confidence_band": "high",
+                      "score_band": "high",
+                      "publish_state": "approved",
+                      "unlock": {
+                        "sector_impacts": "/ripple/signals/{signal_id}/sector-impacts",
+                        "sector_impacts_price_usd": 0.15
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/ripple/index": {
+      "get": {
+        "summary": "Location-only Ripple signal index for discovering where paid disruption intelligence is available",
+        "x-x402-price": "$0.01",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional region, state, or broad signal search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "description": "all, gold, or watchlist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum index cards to return (max 25, default 10)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "ripple_signal_index",
+                  "count": 10,
+                  "navigation": {
+                    "message": "Location-only Ripple index. Company names, employee counts, commercial angles, sector names, spend areas, and impact paths are withheld until a paid signal or sector-impact unlock.",
+                    "next_step": "Use unlock.sector_impacts for detailed downstream sector/vendor impact paths, or use q on /ripple/signals when you want a focused paid signal set."
+                  },
+                  "signals": [
+                    {
+                      "signal_id": "00000000-0000-0000-0000-000000000000",
+                      "event_id": "00000000-0000-0000-0000-000000000000",
+                      "region": "San Mateo County, CA",
+                      "state": "CA",
+                      "signal_type": "company_disruption_pattern",
+                      "depth": "high",
+                      "freshness": "fresh",
+                      "confidence_band": "high",
+                      "score_band": "high",
+                      "publish_state": "approved",
+                      "unlock": {
+                        "sector_impacts": "/ripple/signals/{signal_id}/sector-impacts",
+                        "sector_impacts_price_usd": 0.15
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/gold/signals": {
+      "get": {
+        "summary": "Legacy alias for Ripple Signals: downstream business effects from workforce disruption",
+        "x-x402-price": "$0.10",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional commercial angle, company, or region search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum signals to return (max 10, default 5; open calls are diversified by disruption event)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "ripple_signals",
+                  "legacy_product": "gold_convergence_signals",
+                  "count": 5,
+                  "navigation": {
+                    "message": "Open Ripple calls return a diversified sampler. Add q to focus on a company, region, industry, buyer role, or commercial angle.",
+                    "examples": [
+                      "/ripple/signals?q=Meta&limit=5",
+                      "/ripple/brief?q=logistics&scope=gold&limit=5"
+                    ]
+                  },
+                  "signals": [
+                    {
+                      "title": "Procurement ripple near a workforce disruption",
+                      "commercial_angle": "Business-development signal for bidders, staffing firms, consultants, and local operators.",
+                      "confidence_band": "high",
+                      "evidence_basis": [
+                        "WARN",
+                        "event severity",
+                        "procurement opportunities"
+                      ],
+                      "sector_impact_inventory": {
+                        "impact_count": 32,
+                        "unlock_price_usd": 0.15,
+                        "unlock_endpoint": "/ripple/signals/{signal_id}/sector-impacts"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/ripple/signals": {
+      "get": {
+        "summary": "Ripple Signals: downstream business effects from workforce disruption",
+        "x-x402-price": "$0.10",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional commercial angle, company, or region search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum signals to return (max 10, default 5; open calls are diversified by disruption event)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "ripple_signals",
+                  "count": 5,
+                  "navigation": {
+                    "message": "Open Ripple calls return a diversified sampler. Add q to focus on a company, region, industry, buyer role, or commercial angle.",
+                    "examples": [
+                      "/ripple/signals?q=Meta&limit=5",
+                      "/ripple/brief?q=logistics&scope=gold&limit=5"
+                    ]
+                  },
+                  "signals": [
+                    {
+                      "title": "Procurement ripple near a workforce disruption",
+                      "commercial_angle": "Business-development signal for bidders, staffing firms, consultants, and local operators.",
+                      "confidence_band": "high",
+                      "evidence_basis": [
+                        "WARN",
+                        "event severity",
+                        "procurement opportunities"
+                      ],
+                      "ripple_path_inventory": {
+                        "impact_count": 32,
+                        "unlock_price_usd": 0.15,
+                        "unlock_endpoint": "/ripple/signals/{signal_id}/sector-impacts"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/gold/signals/{id}/sector-impacts": {
+      "get": {
+        "summary": "Legacy alias for Ripple Paths: downstream business-sector impact paths for one signal",
+        "x-x402-price": "$0.15",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Ripple signal UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "ripple_paths_unlock",
+                  "legacy_product": "gold_signal_sector_impact_unlock",
+                  "signal_id": "",
+                  "impact_count": 32,
+                  "business_sector_impacts": [
+                    {
+                      "sector": "office supplies and small procurement",
+                      "spend_area": "branch operations",
+                      "impact_path": "headcount movement can change recurring purchases for pens, notebooks, printer supplies, labels, badges, mailroom items, breakroom stock, and safety consumables",
+                      "buyer_uses": [
+                        "office-supply account monitoring",
+                        "branch sales targeting",
+                        "procurement churn alerts"
+                      ],
+                      "confidence": "low"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/ripple/signals/{id}/sector-impacts": {
+      "get": {
+        "summary": "Ripple Paths: downstream business-sector impact paths for one signal",
+        "x-x402-price": "$0.15",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Ripple signal UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "ripple_paths_unlock",
+                  "signal_id": "",
+                  "impact_count": 32,
+                  "business_sector_impacts": [
+                    {
+                      "sector": "office supplies and small procurement",
+                      "spend_area": "branch operations",
+                      "impact_path": "headcount movement can change recurring purchases for pens, notebooks, printer supplies, labels, badges, mailroom items, breakroom stock, and safety consumables",
+                      "buyer_uses": [
+                        "office-supply account monitoring",
+                        "branch sales targeting",
+                        "procurement churn alerts"
+                      ],
+                      "confidence": "low"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/gold/brief": {
+      "get": {
+        "summary": "Legacy alias for the Disruption Intelligence Ripple Report",
+        "x-x402-price": "$0.25",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional commercial angle, company, region, or industry search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "description": "all, gold, or watchlist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum delivered signals to include (max 10, default 5)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "disruption_intelligence_ripple_report",
+                  "report_name": "Disruption Intelligence Ripple Report",
+                  "legacy_product": "commercial_convergence_brief",
+                  "navigation": {
+                    "message": "Use q to focus the brief; use delivered_signals[].ripple_path_inventory.unlock_endpoint for deeper downstream impact paths.",
+                    "examples": [
+                      "/ripple/brief?q=Meta&limit=5",
+                      "/ripple/brief?q=logistics&scope=gold&limit=5"
+                    ]
+                  },
+                  "inventory": {
+                    "matches": 0,
+                    "fresh": 0,
+                    "gold": 0,
+                    "watchlist": 0
+                  },
+                  "readout": {
+                    "headline": "Commercial signal headline",
+                    "commercial_angle": "A compact commercial interpretation.",
+                    "why_it_matters": "Why the buyer should care now."
+                  },
+                  "recommended_actions": [
+                    "Review exposed accounts, territories, or sales motion."
+                  ],
+                  "delivered_signals": []
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required — include x402 payment-signature header"
+          }
+        }
+      }
+    },
+    "/ripple/brief": {
+      "get": {
+        "summary": "Disruption Intelligence Ripple Report: a paid brief about downstream business effects from workforce disruption",
+        "x-x402-price": "$0.25",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Optional commercial angle, company, region, or industry search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "description": "all, gold, or watchlist",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum delivered signals to include (max 10, default 5)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "product": "disruption_intelligence_ripple_report",
+                  "report_name": "Disruption Intelligence Ripple Report",
+                  "navigation": {
+                    "message": "Use q to focus the brief; use delivered_signals[].ripple_path_inventory.unlock_endpoint for deeper downstream impact paths.",
+                    "examples": [
+                      "/ripple/brief?q=Meta&limit=5",
+                      "/ripple/brief?q=logistics&scope=gold&limit=5"
+                    ]
+                  },
+                  "inventory": {
+                    "matches": 0,
+                    "fresh": 0,
+                    "gold": 0,
+                    "watchlist": 0
+                  },
+                  "readout": {
+                    "headline": "Commercial signal headline",
+                    "commercial_angle": "A compact commercial interpretation.",
+                    "why_it_matters": "Why the buyer should care now."
+                  },
+                  "recommended_actions": [
+                    "Review exposed accounts, territories, or sales motion."
+                  ],
+                  "delivered_signals": []
+                }
               }
             }
           },
